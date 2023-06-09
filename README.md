@@ -15,7 +15,7 @@ The Python Robotics repository is licensed under the MIT license and was created
 
 ## Introduction
 
-The Autonomous Transpalet Project focuses on developing an autonomous system that can control a transpalet to perform various tasks in a simulated environment. The system utilizes the power of the PRM algorithm for global path planning and the DWA algorithm for local trajectory generation. By combining these algorithms, the transpalet can autonomously navigate its environment, pick up palets, and move them to desired locations.
+The Autonomous Transpalet Project focuses on developing an autonomous system that can control a transpalet to perform various tasks in a simulated environment. The system utilizes the power of the PRM algorithm for global path planning and the DWA algorithm for local trajectory generation. By combining these algorithms, the transpalet can autonomously navigate its environment, pick up pallets, and move them to desired locations.
 
 ## Installation
 
