@@ -11,11 +11,10 @@ from scipy.spatial.transform import Rotation
 
 from simple_pid import PID
 
-# Setting the positions and the rotations of the both transpalet and palet
+# Setting the positions and the rotations of the both transpalet and pallet
 transpalet_pos = [17.0, 0.0]; transpalet_rot = math.pi*0.5
 palet_pos = [-9.0, 8.0]; palet_rot = math.pi*0.8
 desired_palet_pos = [-15.0, 9.0]; desired_palet_rot = math.pi*0.5
-
 
 transpalet_path = "/myworks/term_project_folder/model.xml"
 palet_path = "/myworks/term_project_folder/palet.xml"
@@ -267,13 +266,11 @@ fork_height_actuator = data.actuator("fork_height")
 
 u = [0.0, 0.0]
 
-reach_palet = True; take_palet = False; move_palet = False; put_palet = False; move_back = False; first_action = True
+reach_palet = True; take_palet = False; move_palet = False; put_palet = False; move_back = False; first_action = True; end_action = False 
 
 viewer = mujoco_viewer.MujocoViewer(model, data)
 while True:
     time = data.time
-    # print("time =",time)
-    # print(check_integer_multp(time, config.dt))
     mid_point_pos = mid_point.xpos
 
     mid_point_rotation_matrix = np.array(mid_point.xmat).reshape(3,3)
@@ -307,14 +304,17 @@ while True:
             dist_to_main_goal = np.hypot((palet_pos[0]-mid_point_pos[0]),(palet_pos[1]-mid_point_pos[1]))
             s_dist_to_main_goal = xy_to_s(palet_pos[0],palet_pos[1],modified_prm_data,s_prm_data) - xy_to_s(mid_point_pos[0],mid_point_pos[1],modified_prm_data,s_prm_data)
 
-            if dist_to_main_goal <= 5 and s_dist_to_main_goal <= 7:
-                drive_speed_actuator.ctrl = 0
-                steering_angle_actuator.ctrl = 0
-
+            if end_action:
                 u = [0.0, 0.0]
                 reach_palet = False
                 take_palet = True
                 first_action = True
+                end_action = False
+
+            if dist_to_main_goal <= 5 and s_dist_to_main_goal <= 7 and reach_palet:
+                drive_speed_actuator.ctrl = 0
+                steering_angle_actuator.ctrl = 0
+                end_action = True
 
         if take_palet:
 
@@ -332,14 +332,18 @@ while True:
             
             dist_to_main_goal = np.hypot((palet_pos[0]-mid_point_pos[0]),(palet_pos[1]-mid_point_pos[1]))
 
-            if dist_to_main_goal <= 0.3:
-                drive_speed_actuator.ctrl = 0
-                steering_angle_actuator.ctrl = 0
-                fork_height_actuator.ctrl = 0.3
+            if end_action:
 
                 take_palet = False
                 move_palet = True
                 first_action = True
+                end_action = False
+
+            if dist_to_main_goal <= 0.3 and take_palet:
+                drive_speed_actuator.ctrl = 0
+                steering_angle_actuator.ctrl = 0
+                fork_height_actuator.ctrl = 1.0
+                end_action = True
 
         if move_palet:
 
@@ -361,15 +365,17 @@ while True:
             dist_to_main_goal = np.hypot((desired_palet_pos[0]-mid_point_pos[0]),(desired_palet_pos[1]-mid_point_pos[1]))
             s_dist_to_main_goal = xy_to_s(desired_palet_pos[0],desired_palet_pos[1],modified_prm_data,s_prm_data) - xy_to_s(mid_point_pos[0],mid_point_pos[1],modified_prm_data,s_prm_data)
 
-            if dist_to_main_goal <= 5 and s_dist_to_main_goal <= 7:
-                drive_speed_actuator.ctrl = 0
-                steering_angle_actuator.ctrl = 0
-
+            if end_action:
                 u = [0.0, 0.0]
-
                 move_palet = False
                 put_palet = True
                 first_action = True
+                end_action = False
+
+            if dist_to_main_goal <= 5 and s_dist_to_main_goal <= 7 and move_palet:
+                drive_speed_actuator.ctrl = 0
+                steering_angle_actuator.ctrl = 0
+                end_action = True
             
         if put_palet:
             if first_action:
@@ -386,14 +392,17 @@ while True:
             
             dist_to_main_goal = np.hypot((desired_palet_pos[0]-mid_point_pos[0]),(desired_palet_pos[1]-mid_point_pos[1]))
 
-            if dist_to_main_goal <= 0.3:
-                drive_speed_actuator.ctrl = 0
-                steering_angle_actuator.ctrl = 0
-                fork_height_actuator.ctrl = 0.0
-
+            if end_action:
                 put_palet = False
                 move_back = True
                 first_action = True
+                end_action = False
+
+            if dist_to_main_goal <= 0.3 and put_palet:
+                drive_speed_actuator.ctrl = 0
+                steering_angle_actuator.ctrl = 0
+                fork_height_actuator.ctrl = 0.0
+                end_action = True
 
         if move_back:
             drive_speed_actuator.ctrl = 0.1
