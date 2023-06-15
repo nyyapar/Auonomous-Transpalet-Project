@@ -128,7 +128,6 @@ The code segment represents a control algorithm responsible for reaching the pal
 - The function deciding_control_inputs() is then called to map the calculated velocities to control signals (drive_speed_actuator.ctrl and steering_angle_actuator.ctrl). These signals determine the desired drive speed and steering angle for the vehicle.
 - The algorithm also keeps track of the distance to the main goal (dist_to_main_goal) and the progress along the path (s_dist_to_main_goal) using the xy_to_s() function. These values are used to trigger specific actions. For instance, when dist_to_main_goal is less than or equal to 5 and s_dist_to_main_goal is less than or equal to 7, it indicates that the vehicle is close to the pallet and the desired position for interaction. In such cases, the drive speed and steering angle signals are set to zero (drive_speed_actuator.ctrl = 0 and steering_angle_actuator.ctrl = 0), and the variable end_action is set to true to indicate the completion of the current action sequence.
 
-
 ### Control Algorithm for Picking Up the Pallet:
 The provided code segment is part of a control algorithm for picking up the pallet. It operates within a conditional statement where different actions are executed based on the state.
 - When the condition take_palet is satisfied, the algorithm performs a series of steps. In the initial iteration (when first_action is true), the code calculates the direction vector of the pallet (palet_direction) and its perpendicular normal vector (palet_normal) based on the pallet's rotation angle (palet_rot). It then defines two potential entry points (palet_enters) for approaching the pallet, located at a distance of 3 times the pallet direction away from the pallet's position (palet_pos).
@@ -136,6 +135,9 @@ The provided code segment is part of a control algorithm for picking up the pall
 - The control signals for the drive speed, steering angle, and fork height (drive_speed_actuator.ctrl, steering_angle_actuator.ctrl, fork_height_actuator.ctrl) are then calculated by calling the function palet_take_or_put_calculations(), which takes as inputs the pallet index, normal vector, pallet position, pallet rotation angle, current position, and current rotation angles.
 - The code also tracks the distance to the main goal (dist_to_main_goal), which represents the remaining distance between the current position and the pallet position. If dist_to_main_goal is less than or equal to 0.3 and the condition take_palet is satisfied, it indicates that the vehicle is close to the pallet and ready for interaction. In this case, the drive speed and steering angle signals are set to zero (drive_speed_actuator.ctrl = 0 and steering_angle_actuator.ctrl = 0), and the fork height signal is set to its maximum value (fork_height_actuator.ctrl = 1.0). The variable end_action is then set to true to signal the completion of the current action sequence.
 Control Algorithm for Moving the Pallet: The provided code segment is part of a control algorithm that handles the movement of the pallet. It is very similar to “Control Algorithm for Reaching the Pallet”.
+
+### Control Algorithm for Moving the Pallet:
+The provided code segment represents a control algorithm for moving the pallet. It is very similar to “Control Algorithm for Reaching the Pallet”.
 
 ### Control Algorithm for Putting Down the Pallet:
 The provided code segment represents a control algorithm for putting down the pallet. It is very similar to “Control Algorithm for Picking Up the Pallet”.
